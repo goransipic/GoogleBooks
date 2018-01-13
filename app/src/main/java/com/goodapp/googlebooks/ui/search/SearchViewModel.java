@@ -15,6 +15,9 @@ import javax.inject.Inject;
 
 import io.reactivex.Observable;
 import io.reactivex.ObservableSource;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Action;
+import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
 import io.reactivex.observers.DisposableObserver;
 import io.reactivex.subjects.PublishSubject;
@@ -28,35 +31,19 @@ public class SearchViewModel extends ViewModel {
 
     Subject<String> searchQuery = PublishSubject.create();
     MutableLiveData<List<Item>> result = new MutableLiveData<>();
-    DisposableObserver<List<Item>> mObservable;
+
+    Disposable mDisposable;
 
     @Inject
     SearchViewModel(BooksRepository booksRepository) {
-
         Observable<List<Item>> observable = searchQuery.switchMap(booksRepository::getBooks);
 
-       mObservable = Observable.merge(observable,observable).subscribeWith(new DisposableObserver<List<Item>>() {
-            @Override
-            public void onNext(List<Item> items) {
-                result.postValue(items);
-            }
-
-            @Override
-            public void onError(Throwable e) {
-
-            }
-
-            @Override
-            public void onComplete() {
-
-            }
-        });
-
+        mDisposable = Observable.merge(observable, observable).subscribe(items -> result.postValue(items));
     }
 
     @Override
     protected void onCleared() {
-        mObservable.dispose();
+        mDisposable.dispose();
     }
 
     public LiveData<List<Item>> render() {

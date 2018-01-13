@@ -37,8 +37,7 @@
                 android:paddingLeft="?paddingLeftRight"
                 android:paddingRight="?paddingLeftRight"
                 android:paddingTop="?paddingTopBottom"
-                android:textColor="@color/material_light_white"
-                android:text="@{obj.volumeInfo.title}"/>
+                android:textColor="@color/material_light_white" />
 
             <TextView
                 android:id="@+id/article_subtitle"
@@ -50,8 +49,7 @@
                 android:paddingLeft="?paddingLeftRight"
                 android:paddingRight="?paddingLeftRight"
                 android:paddingTop="?paddingTopBottom"
-                android:textColor="@color/material_light_white"
-                android:text="@{obj.volumeInfo.title}"/>
+                android:textColor="@color/material_light_white" />
 
             <TextView
                 android:id="@+id/article_author"
@@ -63,8 +61,7 @@
                 android:paddingBottom="?paddingLeftRight"
                 android:paddingLeft="?paddingLeftRight"
                 android:paddingRight="?paddingLeftRight"
-                android:textColor="@color/material_light_white"
-                android:text="@{obj.volumeInfo.title}"/>
+                android:textColor="@color/material_light_white" />
 
         </LinearLayout>
 

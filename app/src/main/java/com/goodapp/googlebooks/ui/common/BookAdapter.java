@@ -35,9 +35,13 @@ public class BookAdapter extends DataBoundListAdapter {
 
         BookItemBinding bookItemBinding = (BookItemBinding) binding;
         Item obj = (Item) o;
-
+        bookItemBinding.articleTitle.setText(obj.getVolumeInfo().getTitle());
+        bookItemBinding.articleSubtitle.setText(obj.getVolumeInfo().getPublisher());
+        bookItemBinding.articleAuthor.setText(obj.getVolumeInfo().getAuthors() != null ? obj.getVolumeInfo().getAuthors().get(0) : "");
         //holder.binding.thumbnail.setAspectRatio(obj.getAspectRatio());
+        bookItemBinding.executePendingBindings();
 
+        if (obj.getVolumeInfo().getImageLinks().getThumbnail() != null)
         Glide.with(bookItemBinding.getRoot().getContext() /* context */)
                 .load(obj.getVolumeInfo().getImageLinks().getThumbnail())
                 .listener(new RequestListener<Drawable>() {
