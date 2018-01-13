@@ -1,4 +1,4 @@
-package com.goodapp.googlebooks.ui.booklist;
+package com.goodapp.googlebooks.ui.search;
 
 /**
  * Created by gsipic on 11/01/2018.

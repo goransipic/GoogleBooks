@@ -1,4 +1,4 @@
-package com.goodapp.googlebooks.ui.booklist;
+package com.goodapp.googlebooks.ui.search;
 
 import android.databinding.ViewDataBinding;
 import android.graphics.Bitmap;

@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
     <data>
-        <variable name="obj" type="com.goodapp.googlebooks.ui.booklist.BookItem"/>
+        <variable name="obj" type="com.goodapp.googlebooks.ui.search.BookItem"/>
     </data>
     <android.support.v7.widget.CardView
         android:id="@+id/cardview"
@@ -20,7 +20,7 @@
             android:orientation="vertical">
 
             <!--suppress AndroidLintContentDescription -->
-            <com.goodapp.googlebooks.ui.booklist.DynamicHeightNetworkImageView
+            <com.goodapp.googlebooks.ui.search.DynamicHeightNetworkImageView
                 android:id="@+id/thumbnail"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
