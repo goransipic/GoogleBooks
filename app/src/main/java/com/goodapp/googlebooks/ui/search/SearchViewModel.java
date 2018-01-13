@@ -5,21 +5,14 @@ import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.support.annotation.NonNull;
 
-import com.goodapp.googlebooks.api.response.Item;
 import com.goodapp.googlebooks.repository.BooksRepository;
-
-
-import java.util.List;
+import com.goodapp.googlebooks.vo.BookItemsState;
+import com.goodapp.googlebooks.vo.BookState;
 
 import javax.inject.Inject;
 
 import io.reactivex.Observable;
-import io.reactivex.ObservableSource;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Action;
-import io.reactivex.functions.Consumer;
-import io.reactivex.functions.Function;
-import io.reactivex.observers.DisposableObserver;
 import io.reactivex.subjects.PublishSubject;
 import io.reactivex.subjects.Subject;
 
@@ -30,15 +23,20 @@ import io.reactivex.subjects.Subject;
 public class SearchViewModel extends ViewModel {
 
     Subject<String> searchQuery = PublishSubject.create();
-    MutableLiveData<List<Item>> result = new MutableLiveData<>();
+    MutableLiveData<BookItemsState> result = new MutableLiveData<>();
 
     Disposable mDisposable;
 
     @Inject
     SearchViewModel(BooksRepository booksRepository) {
-        Observable<List<Item>> observable = searchQuery.switchMap(booksRepository::getBooks);
+        Observable<BookState> observable = searchQuery.switchMap(booksRepository::getBooks);
 
-        mDisposable = Observable.merge(observable, observable).subscribe(items -> result.postValue(items));
+        // Show Loading as inital state
+        BookItemsState initialState = BookItemsState.showInitState();
+
+        mDisposable = observable
+                .scan(initialState, (oldBookState, newBookState) -> newBookState.reduce(oldBookState))
+                .subscribe(items -> result.postValue(items));
     }
 
     @Override
@@ -46,7 +44,7 @@ public class SearchViewModel extends ViewModel {
         mDisposable.dispose();
     }
 
-    public LiveData<List<Item>> render() {
+    public LiveData<BookItemsState> render() {
         return result;
     }
 

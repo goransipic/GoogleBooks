@@ -3,7 +3,12 @@ package com.goodapp.googlebooks.repository;
 import com.goodapp.googlebooks.api.GoogleApiBooks;
 import com.goodapp.googlebooks.api.response.BookSearchResponse;
 import com.goodapp.googlebooks.api.response.Item;
+import com.goodapp.googlebooks.vo.BookError;
 import com.goodapp.googlebooks.vo.BookItem;
+import com.goodapp.googlebooks.vo.BookItemsState;
+import com.goodapp.googlebooks.vo.BookState;
+import com.goodapp.googlebooks.vo.BooksLoaded;
+import com.goodapp.googlebooks.vo.Loading;
 
 import java.util.Collections;
 import java.util.List;
@@ -31,13 +36,14 @@ public class BooksRepository {
         this.mGoogleApiBooks = googleApiBooks;
     }
 
-    public Observable<List<Item>> getBooks(String query) {
-       return mGoogleApiBooks
+    public Observable<BookState> getBooks(String query) {
+        return mGoogleApiBooks
                 .getBooks(query)
-                .map(bookSearchResponse -> bookSearchResponse.getItems())
-                .subscribeOn(Schedulers.io())
-                .onErrorReturn(throwable -> Collections.emptyList())
-                .observeOn(AndroidSchedulers.mainThread());
+                .map(BooksLoaded::new)
+                .cast(BookState.class)
+                .onErrorReturn(error -> new BookError())
+                .startWith(new Loading())
+                .subscribeOn(Schedulers.io());
     }
 
     public Observable<List<BookItem>> updatedBooks() {
