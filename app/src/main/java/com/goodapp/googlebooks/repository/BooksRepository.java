@@ -1,7 +1,7 @@
 package com.goodapp.googlebooks.repository;
 
 import com.goodapp.googlebooks.api.GoogleApiBooks;
-import com.goodapp.googlebooks.ui.search.BookItem;
+import com.goodapp.googlebooks.vo.BookItem;
 
 import java.util.List;
 

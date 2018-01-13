@@ -1,4 +1,4 @@
-package com.goodapp.googlebooks.ui.search;
+package com.goodapp.googlebooks.ui.common;
 
 import android.content.Context;
 import android.support.v7.widget.AppCompatImageView;

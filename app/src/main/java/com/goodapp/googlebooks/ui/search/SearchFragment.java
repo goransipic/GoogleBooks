@@ -8,7 +8,6 @@ import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -24,6 +23,7 @@ import com.goodapp.googlebooks.R;
 import com.goodapp.googlebooks.binding.FragmentDataBindingComponent;
 import com.goodapp.googlebooks.databinding.SearchFragmentBinding;
 import com.goodapp.googlebooks.di.Injectable;
+import com.goodapp.googlebooks.ui.common.BookAdapter;
 import com.goodapp.googlebooks.ui.common.NavigationController;
 import com.goodapp.googlebooks.util.AutoClearedValue;
 

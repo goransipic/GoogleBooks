@@ -1,4 +1,4 @@
-package com.goodapp.googlebooks.ui.search;
+package com.goodapp.googlebooks.ui.common;
 
 import android.databinding.ViewDataBinding;
 import android.graphics.Bitmap;
@@ -14,7 +14,7 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.goodapp.googlebooks.R;
 import com.goodapp.googlebooks.databinding.BookItemBinding;
-import com.goodapp.googlebooks.ui.common.DataBoundListAdapter;
+import com.goodapp.googlebooks.vo.BookItem;
 
 
 /**
