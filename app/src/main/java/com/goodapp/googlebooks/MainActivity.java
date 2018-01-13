@@ -2,10 +2,13 @@ package com.goodapp.googlebooks;
 
 import android.content.Context;
 import android.content.Intent;
+import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 
+import com.goodapp.googlebooks.databinding.MainActivityBinding;
+import com.goodapp.googlebooks.di.MainActivityModule;
 import com.goodapp.googlebooks.ui.common.NavigationController;
 
 import javax.inject.Inject;
@@ -24,7 +27,10 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.main_activity);
+        MainActivityBinding mainActivityBinding = DataBindingUtil.setContentView(this,R.layout.main_activity);
+
+        setSupportActionBar(mainActivityBinding.included.toolbar);
+
         if (savedInstanceState == null) {
             navigationController.navigateToSearch();
         }
