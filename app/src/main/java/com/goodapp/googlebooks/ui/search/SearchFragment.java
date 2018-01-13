@@ -1,5 +1,6 @@
 package com.goodapp.googlebooks.ui.search;
 
+import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
@@ -12,6 +13,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,12 +22,15 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 
 import com.goodapp.googlebooks.R;
+import com.goodapp.googlebooks.api.response.Item;
 import com.goodapp.googlebooks.binding.FragmentDataBindingComponent;
 import com.goodapp.googlebooks.databinding.SearchFragmentBinding;
 import com.goodapp.googlebooks.di.Injectable;
 import com.goodapp.googlebooks.ui.common.BookAdapter;
 import com.goodapp.googlebooks.ui.common.NavigationController;
 import com.goodapp.googlebooks.util.AutoClearedValue;
+
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -69,6 +74,8 @@ public class SearchFragment extends Fragment implements Injectable {
         binding.get().bookList.setAdapter(rvAdapter);
         adapter = new AutoClearedValue<>(this, rvAdapter);
 
+        searchViewModel.render().observe(this, items -> adapter.get().replace(items));
+
         initSearchInputListener();
 
         binding.get().setCallback(() -> searchViewModel.refresh());
@@ -101,17 +108,16 @@ public class SearchFragment extends Fragment implements Injectable {
     }
 
     private void initRecyclerView() {
-
+        binding.get().bookList.setLayoutManager(new StaggeredGridLayoutManager(2,StaggeredGridLayoutManager.VERTICAL));
         binding.get().bookList.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                LinearLayoutManager layoutManager = (LinearLayoutManager)
+                StaggeredGridLayoutManager layoutManager = (StaggeredGridLayoutManager)
                         recyclerView.getLayoutManager();
-                int lastPosition = layoutManager
-                        .findLastVisibleItemPosition();
-                if (lastPosition == adapter.get().getItemCount() - 1) {
-                    searchViewModel.loadNextPage();
-                }
+                //int lastPosition = layoutManager.
+                //if (lastPosition == adapter.get().getItemCount() - 1) {
+                //   searchViewModel.loadNextPage();
+               // }
             }
         });
 

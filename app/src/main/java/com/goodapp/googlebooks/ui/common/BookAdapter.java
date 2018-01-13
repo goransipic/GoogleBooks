@@ -13,6 +13,7 @@ import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.goodapp.googlebooks.R;
+import com.goodapp.googlebooks.api.response.Item;
 import com.goodapp.googlebooks.databinding.BookItemBinding;
 import com.goodapp.googlebooks.vo.BookItem;
 
@@ -33,12 +34,12 @@ public class BookAdapter extends DataBoundListAdapter {
         super.bind(binding, o);
 
         BookItemBinding bookItemBinding = (BookItemBinding) binding;
-        BookItem obj = (BookItem) o;
+        Item obj = (Item) o;
 
         //holder.binding.thumbnail.setAspectRatio(obj.getAspectRatio());
 
         Glide.with(bookItemBinding.getRoot().getContext() /* context */)
-                .load("load something")
+                .load(obj.getVolumeInfo().getImageLinks().getThumbnail())
                 .listener(new RequestListener<Drawable>() {
                     @Override
                     public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {

@@ -3,13 +3,16 @@ package com.goodapp.googlebooks.ui.common;
 import android.annotation.SuppressLint;
 import android.databinding.DataBindingUtil;
 import android.databinding.ViewDataBinding;
+import android.os.AsyncTask;
 import android.support.annotation.MainThread;
 import android.support.annotation.NonNull;
+import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import com.goodapp.googlebooks.BR;
+import com.goodapp.googlebooks.api.response.Item;
 
 import java.util.List;
 
@@ -64,7 +67,7 @@ public abstract class DataBoundListAdapter
         } else {
             final int startVersion = dataVersion;
             final List  oldItems = items;
-            /*new AsyncTask<Void, Void, DiffUtil.DiffResult>() {
+            new AsyncTask<Void, Void, DiffUtil.DiffResult>() {
                 @Override
                 protected DiffUtil.DiffResult  doInBackground(Void... voids) {
                     return DiffUtil.calculateDiff(new DiffUtil.Callback() {
@@ -80,16 +83,14 @@ public abstract class DataBoundListAdapter
 
                         @Override
                         public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
-                            T oldItem = oldItems.get(oldItemPosition);
-                            T newItem = update.get(newItemPosition);
-                            return DataBoundListAdapter.this.areItemsTheSame(oldItem, newItem);
+                            Item oldItem = (Item) oldItems.get(oldItemPosition);
+                            Item newItem = (Item) update.get(newItemPosition);
+                            return oldItem.getId().equals(newItem.getId());
                         }
 
                         @Override
                         public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
-                            T oldItem = oldItems.get(oldItemPosition);
-                            T newItem = update.get(newItemPosition);
-                            return DataBoundListAdapter.this.areContentsTheSame(oldItem, newItem);
+                            return true;
                         }
                     });
                 }
@@ -104,7 +105,7 @@ public abstract class DataBoundListAdapter
                     diffResult.dispatchUpdatesTo(DataBoundListAdapter.this);
 
                 }
-            }.execute();*/
+            }.execute();
         }
     }
 

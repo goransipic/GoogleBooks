@@ -44,6 +44,7 @@
                 android:hint="@string/search_hint" tools:text="google"/>
         </android.support.design.widget.TextInputLayout>
         <ProgressBar
+            android:visibility="gone"
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -66,12 +67,14 @@
         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
             android:text="@{@string/empty_search_result(query)}"
             android:id="@+id/no_results_text"
+            android:visibility="gone"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent" tools:layout_editor_absoluteY="247dp"
             app:layout_constraintBottom_toBottomOf="parent"/>
         <include layout="@layout/loading_state"
+            android:visibility="invisible"
             app:callback="@{() -> callback.retry()}"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

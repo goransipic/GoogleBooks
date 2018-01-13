@@ -21,7 +21,7 @@ class AppModule {
     @Singleton @Provides
     GoogleApiBooks provideGoogleBooksService() {
         return new Retrofit.Builder()
-                .baseUrl("https://api.github.com/")
+                .baseUrl("https://www.googleapis.com/books/v1/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .build()
