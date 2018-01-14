@@ -4,4 +4,7 @@
     <string name="unknown_error">Unknown Error</string>
     <string name="search_hint_text">search books</string>
     <string name="empty_search_result">No results for <b>%s</b></string>
+    <string name="action_share">Share</string>
+    <string name="shared_image_transition">shared_image_transition</string>
+    <string name="up">Up</string>
 </resources>

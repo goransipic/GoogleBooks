@@ -1,6 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="material_layout_vertical_spacing_between_content_areas">8dp</dimen>
-    <dimen name="fab_margin">16dp</dimen>
     <dimen name="default_margin">8dp</dimen>
+
+    <dimen name="detail_title_text_size">32sp</dimen>
+    <dimen name="detail_body_text_size">22sp</dimen>
+    <item name="detail_body_line_spacing_multiplier" format="float" type="fraction">1.25</item>
+
+    <dimen name="fab_elevation">6dp</dimen>
+    <dimen name="fab_press_translation_z">6dp</dimen>
+    <dimen name="fab_margin">24dp</dimen>
+    <dimen name="app_bar_elevation">8dp</dimen>
+    <dimen name="toolbar_inset">16dp</dimen>
+
+    <dimen name="max_width">400dp</dimen>
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="material_component_cards_left_and_right_padding">16dp</dimen>
+    <dimen name="material_component_cards_top_and_bottom_padding">16dp</dimen>
+    <dimen name="material_component_cards_padding_from_edge_of_screen_to_card">4dp</dimen>
+    <dimen name="material_component_cards_space_between_cards">4dp</dimen>
+    <dimen name="floating_action_button_elevation">4dp</dimen>
+    <dimen name="material_layout_vertical_spacing_between_content_areas">8dp</dimen>
+    <dimen name="material_component_cards_primary_title_bottom_padding">16dp</dimen>
+    <dimen name="material_layout_app_bar_height">320dp</dimen>
+    <dimen name="expanded_toolbar_title_margin_bottom">40dp</dimen>
+    <dimen name="expanded_toolbar_height">80dp</dimen>
+    <dimen name="material_layout_keylines_screen_edge_margin">24dp</dimen>
+    <dimen name="material_component_floating_action_button_margin">16dp</dimen>
+    <integer name="grid_column_count">2</integer>
+
 </resources>

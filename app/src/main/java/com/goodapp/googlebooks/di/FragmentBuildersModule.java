@@ -1,5 +1,6 @@
 package com.goodapp.googlebooks.di;
 
+import com.goodapp.googlebooks.ui.detail.DetailFragment;
 import com.goodapp.googlebooks.ui.search.SearchFragment;
 
 import dagger.Module;
@@ -13,4 +14,7 @@ import dagger.android.ContributesAndroidInjector;
 public abstract class FragmentBuildersModule {
     @ContributesAndroidInjector
     abstract SearchFragment contributeSearchFragment();
+
+    @ContributesAndroidInjector
+    abstract DetailFragment contributeDetailFragment();
 }

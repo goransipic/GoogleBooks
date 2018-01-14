@@ -22,7 +22,8 @@
             android:onClick="@{() -> callback.retry()}" />
         <TextView android:layout_width="wrap_content"
             android:visibility="gone"
+            android:textAppearance="?android:textAppearanceMedium"
             android:layout_height="wrap_content"
-            android:id="@+id/error_msg" />
+            android:id="@+id/info_msg" />
     </LinearLayout>
 </layout>

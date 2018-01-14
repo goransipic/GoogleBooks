@@ -30,6 +30,7 @@ import android.view.inputmethod.InputMethodManager;
 
 import com.goodapp.googlebooks.R;
 import com.goodapp.googlebooks.api.response.BookSearchResponse;
+import com.goodapp.googlebooks.api.response.Item;
 import com.goodapp.googlebooks.binding.FragmentDataBindingComponent;
 import com.goodapp.googlebooks.databinding.SearchFragmentBinding;
 import com.goodapp.googlebooks.di.Injectable;
@@ -88,11 +89,7 @@ public class SearchFragment extends Fragment implements Injectable {
     }
 
     @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
-        ((AppCompatActivity) getActivity()).setSupportActionBar(binding.included.toolbar);
-
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         searchViewModel = ViewModelProviders.of(this, viewModelFactory).get(SearchViewModel.class);
         initRecyclerView();
         initSearchView();
@@ -101,26 +98,30 @@ public class SearchFragment extends Fragment implements Injectable {
 
                     if (items.isInit()) {
                         binding.loadingState.progressBar.setVisibility(View.GONE);
-                        binding.loadingState.errorMsg.setVisibility(View.GONE);
-                        binding.loadingState.retry.setVisibility(View.GONE);
-                        binding.bookList.setVisibility(View.GONE);
-                    } else if (items.isError()) {
-                        binding.loadingState.progressBar.setVisibility(View.GONE);
-                        binding.loadingState.errorMsg.setVisibility(View.VISIBLE);
+                        binding.loadingState.infoMsg.setVisibility(View.VISIBLE);
+                        binding.loadingState.infoMsg.setCompoundDrawablesWithIntrinsicBounds(null,null,null,ContextCompat.getDrawable(getActivity(),R.drawable.search_icon));
                         binding.loadingState.retry.setVisibility(View.GONE);
                         binding.bookList.setVisibility(View.GONE);
 
-                        binding.loadingState.errorMsg.setText(R.string.unknown_error);
+                        binding.loadingState.infoMsg.setText("Click icon for Search");
+
+                    } else if (items.isError()) {
+                        binding.loadingState.progressBar.setVisibility(View.GONE);
+                        binding.loadingState.infoMsg.setVisibility(View.VISIBLE);
+                        binding.loadingState.retry.setVisibility(View.GONE);
+                        binding.bookList.setVisibility(View.GONE);
+                        binding.loadingState.infoMsg.setCompoundDrawablesWithIntrinsicBounds(null,null,null,null);
+                        binding.loadingState.infoMsg.setText(R.string.unknown_error);
 
                     } else if (items.isLoadingFirstPage()) {
                         binding.loadingState.progressBar.setVisibility(View.VISIBLE);
-                        binding.loadingState.errorMsg.setVisibility(View.GONE);
+                        binding.loadingState.infoMsg.setVisibility(View.GONE);
                         binding.loadingState.retry.setVisibility(View.GONE);
                         binding.bookList.setVisibility(View.GONE);
 
                     } else if (items.getBookSearchResponse() != null && items.getBookSearchResponse().getItems() != null && !items.isLoadingNextPage()) {
                         binding.loadingState.progressBar.setVisibility(View.GONE);
-                        binding.loadingState.errorMsg.setVisibility(View.GONE);
+                        binding.loadingState.infoMsg.setVisibility(View.GONE);
                         binding.loadingState.retry.setVisibility(View.GONE);
                         binding.bookList.setVisibility(View.VISIBLE);
 
@@ -142,6 +143,14 @@ public class SearchFragment extends Fragment implements Injectable {
         );
 
         binding.setCallback(() -> searchViewModel.refresh());
+
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        ((AppCompatActivity) getActivity()).setSupportActionBar(binding.included.toolbar);
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
@@ -191,7 +200,10 @@ public class SearchFragment extends Fragment implements Injectable {
 
     private void initRecyclerView() {
 
-        BookAdapter rvAdapter = new BookAdapter();
+        BookAdapter rvAdapter = new BookAdapter(item -> {
+            navigationController.navigateToDetail(item);
+
+        });
         binding.bookList.setAdapter(rvAdapter);
 
         adapter = rvAdapter;

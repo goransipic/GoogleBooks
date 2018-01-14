@@ -1,11 +1,13 @@
 package com.goodapp.googlebooks.ui.common;
 
 import android.databinding.ViewDataBinding;
+import android.databinding.generated.callback.OnClickListener;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.Nullable;
 import android.support.v7.graphics.Palette;
+import android.view.View;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
@@ -30,6 +32,12 @@ public class BookAdapter extends DataBoundListAdapter {
 
     private boolean isLoadingNextPage = false;
 
+    private Action action;
+
+    public BookAdapter(Action action) {
+        this.action = action;
+    }
+
     @Override
     protected int getLayoutIdForPosition(int position) {
 
@@ -49,6 +57,7 @@ public class BookAdapter extends DataBoundListAdapter {
 
         if (binding instanceof BookItemBinding) {
             BookItemBinding bookItemBinding = (BookItemBinding) binding;
+            bookItemBinding.cardview.setOnClickListener(v -> action.onClicked((Item) items.get(position)));
             Item obj = (Item) items.get(position);
             bookItemBinding.articleTitle.setText(obj.getVolumeInfo().getTitle());
             bookItemBinding.articleSubtitle.setText(obj.getVolumeInfo().getPublisher());
@@ -113,5 +122,9 @@ public class BookAdapter extends DataBoundListAdapter {
 
     public boolean isLoadingNextPage() {
         return isLoadingNextPage;
+    }
+
+   public interface Action  {
+        void onClicked (Item item);
     }
 }
