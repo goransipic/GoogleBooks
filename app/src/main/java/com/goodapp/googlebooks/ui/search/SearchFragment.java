@@ -1,15 +1,18 @@
 package com.goodapp.googlebooks.ui.search;
 
+import android.annotation.TargetApi;
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.databinding.DataBindingComponent;
 import android.databinding.DataBindingUtil;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -20,6 +23,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 
@@ -139,6 +144,7 @@ public class SearchFragment extends Fragment implements Injectable {
         binding.setCallback(() -> searchViewModel.refresh());
     }
 
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private void initSearchView() {
         MaterialSearchView searchView = binding.included.searchView;
         searchView.setHint(getString(R.string.search_hint_text));
@@ -147,7 +153,8 @@ public class SearchFragment extends Fragment implements Injectable {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 searchViewModel.setQuery(query);
-                return false;
+                binding.included.searchView.hideKeyboard(searchView);
+                return true;
             }
 
             @Override
@@ -156,6 +163,30 @@ public class SearchFragment extends Fragment implements Injectable {
                 return false;
             }
         });
+
+        searchView.setOnSearchViewListener(new MaterialSearchView.SearchViewListener() {
+            @Override
+            public void onSearchViewShown() {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    Window window = getActivity().getWindow();
+                    window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+                    window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+                    window.setStatusBarColor(ContextCompat.getColor(getActivity(), R.color.material_gray_500));
+                }
+            }
+
+            @Override
+            public void onSearchViewClosed() {
+                //Do some magic
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    Window window = getActivity().getWindow();
+                    window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+                    window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+                    window.setStatusBarColor(ContextCompat.getColor(getActivity(), R.color.colorPrimaryDark));
+                }
+            }
+        });
+
     }
 
     private void initRecyclerView() {
