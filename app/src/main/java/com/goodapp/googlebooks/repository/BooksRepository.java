@@ -1,24 +1,12 @@
 package com.goodapp.googlebooks.repository;
 
 import com.goodapp.googlebooks.api.GoogleApiBooks;
-import com.goodapp.googlebooks.api.response.BookSearchResponse;
-import com.goodapp.googlebooks.api.response.Item;
-import com.goodapp.googlebooks.vo.BookError;
-import com.goodapp.googlebooks.vo.BookItem;
-import com.goodapp.googlebooks.vo.BookItemsState;
 import com.goodapp.googlebooks.vo.BookState;
-import com.goodapp.googlebooks.vo.BooksLoaded;
-import com.goodapp.googlebooks.vo.Loading;
-
-import java.util.Collections;
-import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import io.reactivex.Observable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
 /**
@@ -28,8 +16,11 @@ import io.reactivex.schedulers.Schedulers;
 @Singleton
 public class BooksRepository {
 
-
+    private String mQuery;
     private final GoogleApiBooks mGoogleApiBooks;
+    private int startIndex = 0;
+    private static final int MAX_RESULT = 10;
+    private static final int START_INDEX_OFFSET = 10;
 
     @Inject
     public BooksRepository(GoogleApiBooks googleApiBooks) {
@@ -37,17 +28,25 @@ public class BooksRepository {
     }
 
     public Observable<BookState> getBooks(String query) {
+        startIndex = 0;
+        mQuery = query;
         return mGoogleApiBooks
-                .getBooks(query)
-                .map(BooksLoaded::new)
+                .getBooks(query, MAX_RESULT, startIndex)
+                .map(BookState.BooksLoaded::new)
                 .cast(BookState.class)
-                .onErrorReturn(error -> new BookError())
-                .startWith(new Loading())
+                .onErrorReturn(error -> new BookState.BookError())
+                .startWith(new BookState.Loading())
                 .subscribeOn(Schedulers.io());
     }
 
-    public Observable<List<BookItem>> updatedBooks() {
-        return null;
+    public Observable<BookState> loadNextPage() {
+        return mGoogleApiBooks
+                .getBooks(mQuery, MAX_RESULT, startIndex += START_INDEX_OFFSET)
+                .map(BookState.NextPageLoaded::new)
+                .cast(BookState.class)
+                .onErrorReturn(error -> new BookState.BookError())
+                .startWith(new BookState.NextPageLoading())
+                .subscribeOn(Schedulers.io());
     }
 
 }

@@ -95,4 +95,18 @@ public class Item {
         this.searchInfo = searchInfo;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Item item = (Item) o;
+
+        return volumeInfo != null ? volumeInfo.equals(item.volumeInfo) : item.volumeInfo == null;
+    }
+
+    @Override
+    public int hashCode() {
+        return volumeInfo != null ? volumeInfo.hashCode() : 0;
+    }
 }

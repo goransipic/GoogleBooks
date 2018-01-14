@@ -23,18 +23,20 @@ import io.reactivex.subjects.Subject;
 public class SearchViewModel extends ViewModel {
 
     Subject<String> searchQuery = PublishSubject.create();
+    Subject<Boolean> loadNextPage = PublishSubject.create();
+
     MutableLiveData<BookItemsState> result = new MutableLiveData<>();
 
     Disposable mDisposable;
 
     @Inject
     SearchViewModel(BooksRepository booksRepository) {
-        Observable<BookState> observable = searchQuery.switchMap(booksRepository::getBooks);
-
+        Observable<BookState> loadFirstPage = searchQuery.switchMap(booksRepository::getBooks);
+        Observable<BookState> loadNext = loadNextPage.switchMap(elemnt -> booksRepository.loadNextPage());
         // Show Loading as inital state
         BookItemsState initialState = BookItemsState.showInitState();
 
-        mDisposable = observable
+        mDisposable = Observable.merge(loadFirstPage,loadNext)
                 .scan(initialState, (oldBookState, newBookState) -> newBookState.reduce(oldBookState))
                 .subscribe(items -> result.postValue(items));
     }
@@ -57,7 +59,7 @@ public class SearchViewModel extends ViewModel {
     }
 
     public void loadNextPage() {
-
+        loadNextPage.onNext(true);
     }
 
     public LiveData<Object> getLoadMoreStatus() {

@@ -24,12 +24,12 @@ public abstract class DataBoundListAdapter
         extends RecyclerView.Adapter<DataBoundViewHolder> {
 
     @NonNull
-    private List<?> items;
+    protected List<?> items;
     private int dataVersion = 0;
 
     @Override
     public final DataBoundViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        ViewDataBinding binding = createBinding(parent,viewType);
+        ViewDataBinding binding = createBinding(parent, viewType);
         return new DataBoundViewHolder(binding);
     }
 
@@ -42,18 +42,16 @@ public abstract class DataBoundListAdapter
 
     @Override
     public final void onBindViewHolder(DataBoundViewHolder holder, int position) {
-        bind(holder.binding, items.get(position));
+        bind(holder.binding, position);
         holder.binding.executePendingBindings();
     }
 
-    protected void bind(ViewDataBinding binding, Object o) {
-        binding.setVariable(BR.obj,o);
-    }
+    abstract void bind(ViewDataBinding binding, int position);
 
     @SuppressLint("StaticFieldLeak")
     @MainThread
-    public void replace(final List<?> update) {
-        dataVersion ++;
+    public void replace(final List<Item> update) {
+        dataVersion++;
         if (items == null) {
             if (update == null) {
                 return;
@@ -66,10 +64,10 @@ public abstract class DataBoundListAdapter
             notifyItemRangeRemoved(0, oldSize);
         } else {
             final int startVersion = dataVersion;
-            final List  oldItems = items;
+            final List oldItems = items;
             new AsyncTask<Void, Void, DiffUtil.DiffResult>() {
                 @Override
-                protected DiffUtil.DiffResult  doInBackground(Void... voids) {
+                protected DiffUtil.DiffResult doInBackground(Void... voids) {
                     return DiffUtil.calculateDiff(new DiffUtil.Callback() {
                         @Override
                         public int getOldListSize() {
@@ -83,16 +81,25 @@ public abstract class DataBoundListAdapter
 
                         @Override
                         public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
-                            Item oldItem = (Item) oldItems.get(oldItemPosition);
-                            Item newItem = (Item) update.get(newItemPosition);
-                            return oldItem.getId().equals(newItem.getId());
+                            Object oldItem = oldItems.get(oldItemPosition);
+                            Object newItem = update.get(newItemPosition);
+
+                            if (oldItem instanceof Item
+                                    && newItem instanceof Item
+                                    && ((Item) oldItem).getId().equals(((Item) newItem).getId())){
+                                return true;
+                            }
+                            return false;
                         }
 
                         @Override
                         public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
-                            return true;
+                            Item oldItem = (Item) oldItems.get(oldItemPosition);
+                            Item newItem = (Item) update.get(newItemPosition);
+
+                            return oldItem.equals(newItem);
                         }
-                    });
+                    },true);
                 }
 
                 @Override
@@ -112,7 +119,8 @@ public abstract class DataBoundListAdapter
     protected abstract int getLayoutIdForPosition(int position);
 
     @Override
-    public int getItemCount() {return items == null ? 0 : items.size();
+    public int getItemCount() {
+        return items == null ? 0 : items.size();
     }
 
     @Override

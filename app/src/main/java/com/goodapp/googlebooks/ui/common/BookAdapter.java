@@ -16,7 +16,10 @@ import com.goodapp.googlebooks.R;
 import com.goodapp.googlebooks.api.response.ImageLinks;
 import com.goodapp.googlebooks.api.response.Item;
 import com.goodapp.googlebooks.databinding.BookItemBinding;
+import com.goodapp.googlebooks.databinding.ItemLoadingBinding;
 import com.goodapp.googlebooks.vo.BookItem;
+
+import java.util.List;
 
 
 /**
@@ -25,45 +28,90 @@ import com.goodapp.googlebooks.vo.BookItem;
 
 public class BookAdapter extends DataBoundListAdapter {
 
+    private boolean isLoadingNextPage = false;
+
     @Override
     protected int getLayoutIdForPosition(int position) {
-        return R.layout.book_item;
+
+        if (isLoadingNextPage && position == items.size()) {
+            return R.layout.item_loading;
+        } else {
+            return R.layout.book_item;
+        }
     }
 
     @Override
-    protected void bind(ViewDataBinding binding, Object o) {
-        super.bind(binding, o);
+    protected void bind(ViewDataBinding binding, int position) {
 
-        BookItemBinding bookItemBinding = (BookItemBinding) binding;
-        Item obj = (Item) o;
-        bookItemBinding.articleTitle.setText(obj.getVolumeInfo().getTitle());
-        bookItemBinding.articleSubtitle.setText(obj.getVolumeInfo().getPublisher());
-        bookItemBinding.articleAuthor.setText(obj.getVolumeInfo().getAuthors() != null ? obj.getVolumeInfo().getAuthors().get(0) : "");
-        //holder.binding.thumbnail.setAspectRatio(obj.getAspectRatio());
-        bookItemBinding.executePendingBindings();
+        if (binding instanceof ItemLoadingBinding){
+            return;
+        }
 
-        ImageLinks imageLinks = obj.getVolumeInfo().getImageLinks();
+        if (binding instanceof BookItemBinding) {
+            BookItemBinding bookItemBinding = (BookItemBinding) binding;
+            Item obj = (Item) items.get(position);
+            bookItemBinding.articleTitle.setText(obj.getVolumeInfo().getTitle());
+            bookItemBinding.articleSubtitle.setText(obj.getVolumeInfo().getPublisher());
+            bookItemBinding.articleAuthor.setText(obj.getVolumeInfo().getAuthors() != null ? obj.getVolumeInfo().getAuthors().get(0) : "");
+            //holder.binding.thumbnail.setAspectRatio(obj.getAspectRatio());
+            bookItemBinding.executePendingBindings();
 
-        if (imageLinks != null && imageLinks.getThumbnail() != null)
-        Glide.with(bookItemBinding.getRoot().getContext() /* context */)
-                .load(obj.getVolumeInfo().getImageLinks().getThumbnail())
-                .listener(new RequestListener<Drawable>() {
-                    @Override
-                    public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
-                        return false;
-                    }
+            ImageLinks imageLinks = obj.getVolumeInfo().getImageLinks();
 
-                    @Override
-                    public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
-                        Bitmap bitmap = ((BitmapDrawable)resource.getCurrent()).getBitmap();
-                        Palette palette = Palette.generate(bitmap);
-                        int defaultColor = 0xFF333333;
-                        int color = palette.getDarkMutedColor(defaultColor);
-                        bookItemBinding.cardview.setCardBackgroundColor(color);
-                        return false;
-                    }
-                })
-                .into(bookItemBinding.thumbnail);
+            if (imageLinks != null && imageLinks.getThumbnail() != null)
+                Glide.with(bookItemBinding.getRoot().getContext() /* context */)
+                        .load(obj.getVolumeInfo().getImageLinks().getThumbnail())
+                        .listener(new RequestListener<Drawable>() {
+                            @Override
+                            public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                                return false;
+                            }
 
+                            @Override
+                            public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                                Bitmap bitmap = ((BitmapDrawable) resource.getCurrent()).getBitmap();
+                                Palette palette = Palette.generate(bitmap);
+                                int defaultColor = 0xFF333333;
+                                int color = palette.getDarkMutedColor(defaultColor);
+                                bookItemBinding.cardview.setCardBackgroundColor(color);
+                                return false;
+                            }
+                        })
+                        .into(bookItemBinding.thumbnail);
+        } else {
+            return;
+        }
+
+    }
+
+    public List<?> getItems() {
+        return items;
+    }
+
+    @Override public int getItemCount() {
+        return items == null ? 0 : (items.size() + (isLoadingNextPage ? 1 : 0));
+    }
+
+    /**
+     * @return true if value has changed since last invocation
+     */
+    public boolean setLoadingNextPage(boolean loadingNextPage) {
+        boolean hasLoadingMoreChanged = loadingNextPage != isLoadingNextPage;
+
+        boolean notifyInserted = loadingNextPage && hasLoadingMoreChanged;
+        boolean notifyRemoved = !loadingNextPage && hasLoadingMoreChanged;
+        isLoadingNextPage = loadingNextPage;
+
+        if (notifyInserted) {
+            notifyItemInserted(items.size());
+        } else if (notifyRemoved) {
+            notifyItemRemoved(items.size());
+        }
+
+        return hasLoadingMoreChanged;
+    }
+
+    public boolean isLoadingNextPage() {
+        return isLoadingNextPage;
     }
 }

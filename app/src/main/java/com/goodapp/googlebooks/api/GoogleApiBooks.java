@@ -15,6 +15,8 @@ import retrofit2.http.Query;
 public interface GoogleApiBooks {
 
     @GET("volumes")
-    Observable<BookSearchResponse> getBooks(@Query("q") String query);
-
+    Observable<BookSearchResponse> getBooks(
+            @Query("q") String query,
+            @Query("maxResults") Integer maxResults,
+            @Query("startIndex") Integer startIndex);
 }

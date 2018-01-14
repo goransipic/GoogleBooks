@@ -10,8 +10,8 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,6 +27,7 @@ import com.goodapp.googlebooks.di.Injectable;
 import com.goodapp.googlebooks.ui.common.BookAdapter;
 import com.goodapp.googlebooks.ui.common.NavigationController;
 import com.goodapp.googlebooks.util.AutoClearedValue;
+import com.jakewharton.rxbinding2.support.v7.widget.RxRecyclerView;
 
 import javax.inject.Inject;
 
@@ -46,9 +47,10 @@ public class SearchFragment extends Fragment implements Injectable {
 
     AutoClearedValue<SearchFragmentBinding> binding;
 
-    AutoClearedValue<BookAdapter> adapter;
+    BookAdapter adapter;
 
     private SearchViewModel searchViewModel;
+    private GridLayoutManager layoutManager;
 
     @Nullable
     @Override
@@ -68,7 +70,7 @@ public class SearchFragment extends Fragment implements Injectable {
         initRecyclerView();
         BookAdapter rvAdapter = new BookAdapter();
         binding.get().bookList.setAdapter(rvAdapter);
-        adapter = new AutoClearedValue<>(this, rvAdapter);
+        adapter = rvAdapter;
 
         searchViewModel.render().observe(this, items -> {
 
@@ -85,20 +87,35 @@ public class SearchFragment extends Fragment implements Injectable {
 
                         binding.get().loadingState.errorMsg.setText(R.string.unknown_error);
 
-                    } else if (items.isLoading()) {
+                    } else if (items.isLoadingFirstPage()) {
                         binding.get().loadingState.progressBar.setVisibility(View.VISIBLE);
                         binding.get().loadingState.errorMsg.setVisibility(View.GONE);
                         binding.get().loadingState.retry.setVisibility(View.GONE);
                         binding.get().bookList.setVisibility(View.GONE);
 
-                    } else if (items.getBookSearchResponse() != null && items.getBookSearchResponse().getItems() != null) {
+                    } else if (items.getBookSearchResponse() != null && items.getBookSearchResponse().getItems() != null && !items.isLoadingNextPage()) {
                         binding.get().loadingState.progressBar.setVisibility(View.GONE);
                         binding.get().loadingState.errorMsg.setVisibility(View.GONE);
                         binding.get().loadingState.retry.setVisibility(View.GONE);
                         binding.get().bookList.setVisibility(View.VISIBLE);
 
                         BookSearchResponse bookSearchResponse = items.getBookSearchResponse();
-                        adapter.get().replace(bookSearchResponse.getItems());
+                        adapter.setLoadingNextPage(items.isLoadingNextPage());
+                        adapter.replace(bookSearchResponse.getItems());
+
+                        binding.get().bookList.scrollBy(0,10);
+
+                    } else if (!items.isLoadingFirstPage()) {
+                        boolean changed = adapter.setLoadingNextPage(items.isLoadingNextPage());
+
+                        if (changed && items.isLoadingNextPage()) {
+                            // scroll to the end of the list so that the user sees the load more progress bar
+                            binding.get().bookList.smoothScrollToPosition(adapter.getItemCount());
+                        }
+
+                        adapter.replace(items.getBookSearchResponse().getItems());
+
+
                     }
                 }
         );
@@ -135,18 +152,30 @@ public class SearchFragment extends Fragment implements Injectable {
     }
 
     private void initRecyclerView() {
-        binding.get().bookList.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
-        binding.get().bookList.addOnScrollListener(new RecyclerView.OnScrollListener() {
+        layoutManager = new GridLayoutManager(this.getContext(), 2);
+
+        binding.get().bookList.setLayoutManager(layoutManager);
+
+        layoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
             @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                StaggeredGridLayoutManager layoutManager = (StaggeredGridLayoutManager)
-                        recyclerView.getLayoutManager();
-                //int lastPosition = layoutManager.
-                //if (lastPosition == adapter.get().getItemCount() - 1) {
-                //   searchViewModel.loadNextPage();
-                // }
+            public int getSpanSize(int position) {
+
+                int viewType = adapter.getItemViewType(position);
+                if (viewType == R.layout.item_loading) {
+                    return 2;
+                }
+
+                return 1;
             }
         });
+
+        RxRecyclerView.scrollStateChanges(binding.get().bookList)
+                .filter(event -> !adapter.isLoadingNextPage())
+                .filter(event -> event == RecyclerView.SCROLL_STATE_IDLE)
+                .filter(event -> layoutManager.findLastCompletelyVisibleItemPosition()
+                        == adapter.getItems().size() - 1)
+                .map(integer -> true).subscribe(event -> searchViewModel.loadNextPage());
+
 
     }
 

@@ -217,4 +217,22 @@ public class VolumeInfo {
         this.canonicalVolumeLink = canonicalVolumeLink;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        VolumeInfo that = (VolumeInfo) o;
+
+        if (title != null ? !title.equals(that.title) : that.title != null) return false;
+        return publisher != null ? publisher.equals(that.publisher) : that.publisher == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = title != null ? title.hashCode() : 0;
+        result = 31 * result + (authors != null ? authors.hashCode() : 0);
+        result = 31 * result + (publisher != null ? publisher.hashCode() : 0);
+        return result;
+    }
 }
