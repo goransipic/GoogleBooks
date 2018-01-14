@@ -59,6 +59,7 @@ dependencies {
     annotationProcessor deps.lifecycle.compiler
 
     implementation deps.searchview
+    implementation deps.retrofit_logging
 
     testImplementation deps.junit
     testImplementation deps.mock_web_server
