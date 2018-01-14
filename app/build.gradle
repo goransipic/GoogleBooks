@@ -58,6 +58,8 @@ dependencies {
     annotationProcessor deps.room.compiler
     annotationProcessor deps.lifecycle.compiler
 
+    implementation deps.searchview
+
     testImplementation deps.junit
     testImplementation deps.mock_web_server
     testImplementation (deps.arch_core.testing, {

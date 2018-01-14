@@ -34,6 +34,11 @@
         <item name="android:textColor">@android:color/white</item>
     </style>
 
+    <style name="MaterialSearchViewStyle">
+        <!-- Hint for edit text -->
+        <item name="android:hint">@string/search_hint_text</item>
+    </style>
+
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />

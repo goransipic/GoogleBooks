@@ -10,10 +10,14 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
@@ -28,6 +32,7 @@ import com.goodapp.googlebooks.ui.common.BookAdapter;
 import com.goodapp.googlebooks.ui.common.NavigationController;
 import com.goodapp.googlebooks.util.AutoClearedValue;
 import com.jakewharton.rxbinding2.support.v7.widget.RxRecyclerView;
+import com.miguelcatalan.materialsearchview.MaterialSearchView;
 
 import javax.inject.Inject;
 
@@ -45,12 +50,18 @@ public class SearchFragment extends Fragment implements Injectable {
 
     DataBindingComponent dataBindingComponent = new FragmentDataBindingComponent(this);
 
-    AutoClearedValue<SearchFragmentBinding> binding;
+    SearchFragmentBinding binding;
 
     BookAdapter adapter;
 
     private SearchViewModel searchViewModel;
     private GridLayoutManager layoutManager;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
 
     @Nullable
     @Override
@@ -59,102 +70,104 @@ public class SearchFragment extends Fragment implements Injectable {
         SearchFragmentBinding dataBinding = DataBindingUtil
                 .inflate(inflater, R.layout.search_fragment, container, false,
                         dataBindingComponent);
-        binding = new AutoClearedValue<>(this, dataBinding);
+        binding = dataBinding;
         return dataBinding.getRoot();
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_main, menu);
+
+        MenuItem item = menu.findItem(R.id.action_search);
+        binding.included.searchView.setMenuItem(item);
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+
+        ((AppCompatActivity) getActivity()).setSupportActionBar(binding.included.toolbar);
+
         searchViewModel = ViewModelProviders.of(this, viewModelFactory).get(SearchViewModel.class);
         initRecyclerView();
-        BookAdapter rvAdapter = new BookAdapter();
-        binding.get().bookList.setAdapter(rvAdapter);
-        adapter = rvAdapter;
+        initSearchView();
 
         searchViewModel.render().observe(this, items -> {
 
                     if (items.isInit()) {
-                        binding.get().loadingState.progressBar.setVisibility(View.GONE);
-                        binding.get().loadingState.errorMsg.setVisibility(View.GONE);
-                        binding.get().loadingState.retry.setVisibility(View.GONE);
-                        binding.get().bookList.setVisibility(View.GONE);
+                        binding.loadingState.progressBar.setVisibility(View.GONE);
+                        binding.loadingState.errorMsg.setVisibility(View.GONE);
+                        binding.loadingState.retry.setVisibility(View.GONE);
+                        binding.bookList.setVisibility(View.GONE);
                     } else if (items.isError()) {
-                        binding.get().loadingState.progressBar.setVisibility(View.GONE);
-                        binding.get().loadingState.errorMsg.setVisibility(View.VISIBLE);
-                        binding.get().loadingState.retry.setVisibility(View.GONE);
-                        binding.get().bookList.setVisibility(View.GONE);
+                        binding.loadingState.progressBar.setVisibility(View.GONE);
+                        binding.loadingState.errorMsg.setVisibility(View.VISIBLE);
+                        binding.loadingState.retry.setVisibility(View.GONE);
+                        binding.bookList.setVisibility(View.GONE);
 
-                        binding.get().loadingState.errorMsg.setText(R.string.unknown_error);
+                        binding.loadingState.errorMsg.setText(R.string.unknown_error);
 
                     } else if (items.isLoadingFirstPage()) {
-                        binding.get().loadingState.progressBar.setVisibility(View.VISIBLE);
-                        binding.get().loadingState.errorMsg.setVisibility(View.GONE);
-                        binding.get().loadingState.retry.setVisibility(View.GONE);
-                        binding.get().bookList.setVisibility(View.GONE);
+                        binding.loadingState.progressBar.setVisibility(View.VISIBLE);
+                        binding.loadingState.errorMsg.setVisibility(View.GONE);
+                        binding.loadingState.retry.setVisibility(View.GONE);
+                        binding.bookList.setVisibility(View.GONE);
 
                     } else if (items.getBookSearchResponse() != null && items.getBookSearchResponse().getItems() != null && !items.isLoadingNextPage()) {
-                        binding.get().loadingState.progressBar.setVisibility(View.GONE);
-                        binding.get().loadingState.errorMsg.setVisibility(View.GONE);
-                        binding.get().loadingState.retry.setVisibility(View.GONE);
-                        binding.get().bookList.setVisibility(View.VISIBLE);
+                        binding.loadingState.progressBar.setVisibility(View.GONE);
+                        binding.loadingState.errorMsg.setVisibility(View.GONE);
+                        binding.loadingState.retry.setVisibility(View.GONE);
+                        binding.bookList.setVisibility(View.VISIBLE);
 
                         BookSearchResponse bookSearchResponse = items.getBookSearchResponse();
                         adapter.setLoadingNextPage(items.isLoadingNextPage());
                         adapter.replace(bookSearchResponse.getItems());
-
-                        binding.get().bookList.scrollBy(0,10);
 
                     } else if (!items.isLoadingFirstPage()) {
                         boolean changed = adapter.setLoadingNextPage(items.isLoadingNextPage());
 
                         if (changed && items.isLoadingNextPage()) {
                             // scroll to the end of the list so that the user sees the load more progress bar
-                            binding.get().bookList.smoothScrollToPosition(adapter.getItemCount());
+                            binding.bookList.smoothScrollToPosition(adapter.getItemCount());
                         }
 
                         adapter.replace(items.getBookSearchResponse().getItems());
-
-
                     }
                 }
         );
 
-        initSearchInputListener();
-
-        binding.get().setCallback(() -> searchViewModel.refresh());
+        binding.setCallback(() -> searchViewModel.refresh());
     }
 
-    private void initSearchInputListener() {
-        binding.get().input.setOnEditorActionListener((v, actionId, event) -> {
-            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                doSearch(v);
-                return true;
+    private void initSearchView() {
+        MaterialSearchView searchView = binding.included.searchView;
+        searchView.setHint(getString(R.string.search_hint_text));
+        searchView.setHintTextColor(R.color.colorAccent);
+        searchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                searchViewModel.setQuery(query);
+                return false;
             }
-            return false;
-        });
-        binding.get().input.setOnKeyListener((v, keyCode, event) -> {
-            if ((event.getAction() == KeyEvent.ACTION_DOWN)
-                    && (keyCode == KeyEvent.KEYCODE_ENTER)) {
-                doSearch(v);
-                return true;
-            }
-            return false;
-        });
-    }
 
-    private void doSearch(View v) {
-        String query = binding.get().input.getText().toString();
-        // Dismiss keyboard
-        dismissKeyboard(v.getWindowToken());
-        binding.get().setQuery(query);
-        searchViewModel.setQuery(query);
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                //Do some magic
+                return false;
+            }
+        });
     }
 
     private void initRecyclerView() {
+
+        BookAdapter rvAdapter = new BookAdapter();
+        binding.bookList.setAdapter(rvAdapter);
+
+        adapter = rvAdapter;
+
         layoutManager = new GridLayoutManager(this.getContext(), 2);
 
-        binding.get().bookList.setLayoutManager(layoutManager);
+        binding.bookList.setLayoutManager(layoutManager);
 
         layoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
             @Override
@@ -169,7 +182,7 @@ public class SearchFragment extends Fragment implements Injectable {
             }
         });
 
-        RxRecyclerView.scrollStateChanges(binding.get().bookList)
+        RxRecyclerView.scrollStateChanges(binding.bookList)
                 .filter(event -> !adapter.isLoadingNextPage())
                 .filter(event -> event == RecyclerView.SCROLL_STATE_IDLE)
                 .filter(event -> layoutManager.findLastCompletelyVisibleItemPosition()
@@ -177,15 +190,6 @@ public class SearchFragment extends Fragment implements Injectable {
                 .map(integer -> true).subscribe(event -> searchViewModel.loadNextPage());
 
 
-    }
-
-    private void dismissKeyboard(IBinder windowToken) {
-        FragmentActivity activity = getActivity();
-        if (activity != null) {
-            InputMethodManager imm = (InputMethodManager) activity.getSystemService(
-                    Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(windowToken, 0);
-        }
     }
 
 }

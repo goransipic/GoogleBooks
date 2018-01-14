@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
 
         MainActivityBinding mainActivityBinding = DataBindingUtil.setContentView(this,R.layout.main_activity);
 
-        setSupportActionBar(mainActivityBinding.included.toolbar);
+        //setSupportActionBar(mainActivityBinding.included.toolbar);
 
         if (savedInstanceState == null) {
             navigationController.navigateToSearch();

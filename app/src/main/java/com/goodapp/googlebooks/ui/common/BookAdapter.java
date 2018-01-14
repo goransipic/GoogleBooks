@@ -17,7 +17,7 @@ import com.goodapp.googlebooks.api.response.ImageLinks;
 import com.goodapp.googlebooks.api.response.Item;
 import com.goodapp.googlebooks.databinding.BookItemBinding;
 import com.goodapp.googlebooks.databinding.ItemLoadingBinding;
-import com.goodapp.googlebooks.vo.BookItem;
+
 
 import java.util.List;
 

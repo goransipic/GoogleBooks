@@ -8,14 +8,13 @@
         android:layout_height="match_parent"
         tools:ignore="MergeRootFrame">
 
-        <include
-            android:id="@+id/included"
-            layout="@layout/include_article_list_toolbar" />
-
         <FrameLayout
             android:id="@+id/container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@id/included" />
+            android:layout_below="@+id/included" />
+
+
+
     </RelativeLayout>
 </layout>
