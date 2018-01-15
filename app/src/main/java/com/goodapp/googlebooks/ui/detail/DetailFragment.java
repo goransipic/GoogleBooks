@@ -125,11 +125,14 @@ public class DetailFragment extends Fragment implements Injectable {
                         @Override
                         public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
                             Bitmap bitmap = ((BitmapDrawable) resource.getCurrent()).getBitmap();
-                            Palette palette = Palette.generate(bitmap);
-                            int defaultColor = 0xFF333333;
-                            mMutedColor = palette.getDarkMutedColor(defaultColor);
-                            mRootView.findViewById(R.id.meta_bar)
-                                    .setBackgroundColor(mMutedColor);
+                            Palette.from(bitmap).generate(p -> {
+                                // Use generated instance
+                                Palette palette = p;
+                                int defaultColor = 0xFF333333;
+                                mMutedColor = palette.getDarkMutedColor(defaultColor);
+                                mRootView.findViewById(R.id.meta_bar)
+                                        .setBackgroundColor(mMutedColor);
+                            });
                             return false;
                         }
                     })
