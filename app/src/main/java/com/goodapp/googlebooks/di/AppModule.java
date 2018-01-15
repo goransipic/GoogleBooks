@@ -3,6 +3,7 @@ package com.goodapp.googlebooks.di;
 import android.app.Application;
 
 import com.goodapp.googlebooks.BuildConfig;
+import com.goodapp.googlebooks.Constants;
 import com.goodapp.googlebooks.api.GoogleApiBooks;
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 
@@ -32,7 +33,7 @@ class AppModule {
     @Provides
     GoogleApiBooks provideGoogleBooksService(OkHttpClient client) {
         return new Retrofit.Builder()
-                .baseUrl("https://www.googleapis.com/books/v1/")
+                .baseUrl(Constants.BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .client(client)
@@ -52,7 +53,7 @@ class AppModule {
 
             HttpUrl originalHttpUrl = original.url();
             HttpUrl url = originalHttpUrl.newBuilder()
-                    .addQueryParameter("key", "AIzaSyDnetujB0jerBIiviykhHL_1OVI37aNuug")
+                    .addQueryParameter("key", Constants.GOOGLE_BOOKS_API_KEY)
                     .build();
 
             Request.Builder requestBuilder = original.newBuilder()
