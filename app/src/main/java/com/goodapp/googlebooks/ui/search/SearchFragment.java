@@ -99,7 +99,7 @@ public class SearchFragment extends Fragment implements Injectable {
         searchViewModel.render().observe(this, items -> {
 
                     if (items.getRecentQueries() != null)
-                        Snackbar.make(binding.getRoot(), "Last Query: " +  items.getRecentQueries()[0], Snackbar.LENGTH_LONG).show();
+                        Snackbar.make(binding.getRoot(), getString(R.string.last_query) + " " + items.getRecentQueries()[0], Snackbar.LENGTH_LONG).show();
 
                     if (items.isInit()) {
                         binding.loadingState.progressBar.setVisibility(View.GONE);
