@@ -30,6 +30,7 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
+import com.goodapp.googlebooks.BaseFragment;
 import com.goodapp.googlebooks.R;
 import com.goodapp.googlebooks.api.response.BookSearchResponse;
 import com.goodapp.googlebooks.api.response.Item;
@@ -48,7 +49,7 @@ import javax.inject.Inject;
  * Created by gsipic on 13/01/2018.
  */
 
-public class SearchFragment extends Fragment implements Injectable {
+public class SearchFragment extends BaseFragment implements Injectable {
 
     @Inject
     ViewModelProvider.Factory viewModelFactory;
@@ -156,6 +157,16 @@ public class SearchFragment extends Fragment implements Injectable {
         super.onActivityCreated(savedInstanceState);
 
         ((AppCompatActivity) getActivity()).setSupportActionBar(binding.included.toolbar);
+    }
+
+    @Override
+    public boolean onBackPressed() {
+        if (binding.included.searchView.isSearchOpen()) {
+            binding.included.searchView.closeSearch();
+            return true;
+        } else {
+           return super.onBackPressed();
+        }
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)

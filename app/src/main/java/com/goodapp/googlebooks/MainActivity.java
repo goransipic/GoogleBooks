@@ -11,6 +11,8 @@ import com.goodapp.googlebooks.databinding.MainActivityBinding;
 import com.goodapp.googlebooks.di.MainActivityModule;
 import com.goodapp.googlebooks.ui.common.NavigationController;
 
+import java.util.List;
+
 import javax.inject.Inject;
 
 import dagger.android.DispatchingAndroidInjector;
@@ -37,6 +39,27 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
             navigationController.navigateToSearch();
         }
 
+    }
+
+    @Override
+    public void onBackPressed() {
+
+        List<Fragment> fragmentList = getSupportFragmentManager().getFragments();
+
+        boolean handled = false;
+        for(Fragment f : fragmentList) {
+            if(f instanceof BaseFragment) {
+                handled = ((BaseFragment)f).onBackPressed();
+
+                if(handled) {
+                    break;
+                }
+            }
+        }
+
+        if(!handled) {
+            super.onBackPressed();
+        }
     }
 
     @Override

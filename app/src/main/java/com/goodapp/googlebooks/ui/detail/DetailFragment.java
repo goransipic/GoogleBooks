@@ -28,6 +28,7 @@ import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
+import com.goodapp.googlebooks.BaseFragment;
 import com.goodapp.googlebooks.R;
 import com.goodapp.googlebooks.binding.FragmentDataBindingComponent;
 import com.goodapp.googlebooks.databinding.DetailFragmentBinding;
@@ -38,7 +39,7 @@ import com.goodapp.googlebooks.ui.common.DynamicHeightNetworkImageView;
  * Created by gsipic on 14/01/2018.
  */
 
-public class DetailFragment extends Fragment implements Injectable {
+public class DetailFragment extends BaseFragment implements Injectable {
 
     public static final String ARG_TITLE = "ARG_TITLE";
     public static final String ARG_PUBLISHER = "ARG_PUBLISHER";
