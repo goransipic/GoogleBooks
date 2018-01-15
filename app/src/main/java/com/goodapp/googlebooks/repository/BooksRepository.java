@@ -32,26 +32,20 @@ public class BooksRepository {
     }
 
     public Observable<BookState> getBooks(String query) {
-        startIndex = 0;
         mQuery = query;
 
-        Observable.just(true)
-                .doOnNext(item -> mBooksDb.queryDao().insert(new RecentQuery(query)))
-                .subscribeOn(Schedulers.io())
-                .subscribe();
-
-        return mGoogleApiBooks
-                .getBooks(query, MAX_RESULT, startIndex)
+        return mGoogleApiBooks.getBooks(query, MAX_RESULT, 0)
                 .map(BookState.BooksLoaded::new)
                 .cast(BookState.class)
+                .doOnNext(item -> mBooksDb.queryDao().insert(new RecentQuery(query)))
                 .onErrorReturn(error -> new BookState.BookError())
                 .startWith(new BookState.Loading())
+                .doOnNext(item -> startIndex = 0)
                 .subscribeOn(Schedulers.io());
     }
 
     public Observable<BookState> loadNextPage() {
-        return mGoogleApiBooks
-                .getBooks(mQuery, MAX_RESULT, startIndex += START_INDEX_OFFSET)
+        return mGoogleApiBooks.getBooks(mQuery, MAX_RESULT, startIndex += START_INDEX_OFFSET)
                 .map(BookState.NextPageLoaded::new)
                 .cast(BookState.class)
                 .onErrorReturn(error -> new BookState.BookError())
@@ -60,8 +54,7 @@ public class BooksRepository {
     }
 
     public Observable<BookState> getRecentQuery() {
-        return mBooksDb
-                .queryDao()
+        return mBooksDb.queryDao()
                 .getRecentQuery()
                 .filter(item -> item.size() > 0)
                 .map(BookState.QueryLoaded::new)
