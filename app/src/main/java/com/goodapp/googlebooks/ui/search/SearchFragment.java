@@ -104,7 +104,7 @@ public class SearchFragment extends Fragment implements Injectable {
                     if (items.isInit()) {
                         binding.loadingState.progressBar.setVisibility(View.GONE);
                         binding.loadingState.infoMsg.setVisibility(View.VISIBLE);
-                        //binding.loadingState.infoMsg.setCompoundDrawablesWithIntrinsicBounds(null,null,null,ContextCompat.getDrawable(getActivity(),R.drawable.search_icon));
+                        binding.loadingState.infoMsg.setCompoundDrawablesWithIntrinsicBounds(null,ContextCompat.getDrawable(getActivity(),R.drawable.empty_state),null,null);
                         binding.loadingState.retry.setVisibility(View.GONE);
                         binding.bookList.setVisibility(View.GONE);
 

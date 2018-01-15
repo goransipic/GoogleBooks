@@ -7,5 +7,5 @@
     <string name="action_share">Share</string>
     <string name="shared_image_transition">shared_image_transition</string>
     <string name="up">Up</string>
-    <string name="init_text">Press [img src=search_icon/] to search books.</string>
+    <string name="init_text">Search books, and more \n with the [img src=search_icon/] button at the top</string>
 </resources>

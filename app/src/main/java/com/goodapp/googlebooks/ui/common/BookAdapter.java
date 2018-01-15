@@ -67,9 +67,9 @@ public class BookAdapter extends DataBoundListAdapter {
 
             ImageLinks imageLinks = obj.getVolumeInfo().getImageLinks();
 
-            if (imageLinks != null && imageLinks.getThumbnail() != null)
+            if (imageLinks != null && imageLinks.getSmallThumbnail() != null)
                 Glide.with(bookItemBinding.getRoot().getContext() /* context */)
-                        .load(obj.getVolumeInfo().getImageLinks().getThumbnail())
+                        .load(obj.getVolumeInfo().getImageLinks().getSmallThumbnail())
                         .listener(new RequestListener<Drawable>() {
                             @Override
                             public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
