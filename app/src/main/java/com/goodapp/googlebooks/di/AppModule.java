@@ -1,10 +1,13 @@
 package com.goodapp.googlebooks.di;
 
 import android.app.Application;
+import android.arch.persistence.room.Room;
 
 import com.goodapp.googlebooks.BuildConfig;
 import com.goodapp.googlebooks.Constants;
 import com.goodapp.googlebooks.api.GoogleApiBooks;
+import com.goodapp.googlebooks.db.BooksDb;
+import com.goodapp.googlebooks.db.QueryDao;
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 
 import java.io.IOException;
@@ -66,6 +69,16 @@ class AppModule {
 
         return httpClient.build();
 
+    }
+
+    @Singleton @Provides
+    BooksDb provideDb(Application app) {
+        return Room.databaseBuilder(app, BooksDb.class,"books.db").build();
+    }
+
+    @Singleton @Provides
+    QueryDao provideUserDao(BooksDb db) {
+        return db.queryDao();
     }
 
 }

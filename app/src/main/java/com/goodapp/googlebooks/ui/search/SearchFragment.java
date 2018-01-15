@@ -110,7 +110,7 @@ public class SearchFragment extends Fragment implements Injectable {
                         binding.loadingState.infoMsg.setVisibility(View.VISIBLE);
                         binding.loadingState.retry.setVisibility(View.GONE);
                         binding.bookList.setVisibility(View.GONE);
-                        binding.loadingState.infoMsg.setCompoundDrawablesWithIntrinsicBounds(null,null,null,null);
+                        binding.loadingState.infoMsg.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
                         binding.loadingState.infoMsg.setText(R.string.unknown_error);
 
                     } else if (items.isLoadingFirstPage()) {

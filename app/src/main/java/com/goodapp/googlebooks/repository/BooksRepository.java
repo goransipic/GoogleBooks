@@ -1,7 +1,9 @@
 package com.goodapp.googlebooks.repository;
 
 import com.goodapp.googlebooks.api.GoogleApiBooks;
+import com.goodapp.googlebooks.db.BooksDb;
 import com.goodapp.googlebooks.vo.BookState;
+import com.goodapp.googlebooks.vo.RecentQuery;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -18,18 +20,26 @@ public class BooksRepository {
 
     private String mQuery;
     private final GoogleApiBooks mGoogleApiBooks;
+    private final BooksDb mBooksDb;
     private int startIndex = 0;
     private static final int MAX_RESULT = 10;
     private static final int START_INDEX_OFFSET = 10;
 
     @Inject
-    public BooksRepository(GoogleApiBooks googleApiBooks) {
+    public BooksRepository(BooksDb booksDb, GoogleApiBooks googleApiBooks) {
         this.mGoogleApiBooks = googleApiBooks;
+        this.mBooksDb = booksDb;
     }
 
     public Observable<BookState> getBooks(String query) {
         startIndex = 0;
         mQuery = query;
+
+        Observable.just(true)
+                .doOnNext(item -> mBooksDb.queryDao().insert(new RecentQuery(query)))
+                .subscribeOn(Schedulers.io())
+                .subscribe();
+
         return mGoogleApiBooks
                 .getBooks(query, MAX_RESULT, startIndex)
                 .map(BookState.BooksLoaded::new)
@@ -48,5 +58,16 @@ public class BooksRepository {
                 .startWith(new BookState.NextPageLoading())
                 .subscribeOn(Schedulers.io());
     }
+
+    public Observable<BookState> getRecentQuery() {
+        return mBooksDb
+                .queryDao()
+                .getRecentQuery()
+                .map(BookState.QueryLoaded::new)
+                .cast(BookState.class)
+                .subscribeOn(Schedulers.io())
+                .toObservable();
+    }
+
 
 }

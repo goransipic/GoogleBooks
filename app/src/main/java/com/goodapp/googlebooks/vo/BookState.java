@@ -36,7 +36,7 @@ public interface BookState {
         @Override
         public BookItemsState reduce(BookItemsState oldState) {
 
-            if (bookSearchResponse == null || bookSearchResponse.getItems() == null)  {
+            if (bookSearchResponse == null || bookSearchResponse.getItems() == null) {
                 return BookItemsState.showDataState(oldState.getBookSearchResponse());
             }
 
@@ -48,7 +48,7 @@ public interface BookState {
 
             bookSearchResponse.setItems(data);
 
-            return BookItemsState.showNextPageLoading(bookSearchResponse,false);
+            return BookItemsState.showNextPageLoading(bookSearchResponse, false);
         }
     }
 
@@ -59,7 +59,7 @@ public interface BookState {
     class NextPageLoading implements BookState {
         @Override
         public BookItemsState reduce(BookItemsState oldState) {
-            return BookItemsState.showNextPageLoading(oldState.getBookSearchResponse(),true);
+            return BookItemsState.showNextPageLoading(oldState.getBookSearchResponse(), true);
         }
     }
 
@@ -74,6 +74,25 @@ public interface BookState {
         @Override
         public BookItemsState reduce(BookItemsState oldState) {
             return BookItemsState.showDataState(bookSearchResponse);
+        }
+    }
+
+    class QueryLoaded implements BookState {
+
+        private String[] recentQueriesArray;
+
+        public QueryLoaded(List<RecentQuery> recentQueries) {
+
+            recentQueriesArray = new String[recentQueries.size()];
+
+            for (int i = 0; i < recentQueries.size(); i++) {
+                recentQueriesArray[i] = recentQueries.get(i).query;
+            }
+        }
+
+        @Override
+        public BookItemsState reduce(BookItemsState oldState) {
+            return BookItemsState.showQueryState(oldState, recentQueriesArray);
         }
     }
 
