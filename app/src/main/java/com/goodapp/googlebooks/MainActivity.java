@@ -25,6 +25,8 @@ public class MainActivity extends AppCompatActivity implements HasSupportFragmen
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+
+        setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
 
         MainActivityBinding mainActivityBinding = DataBindingUtil.setContentView(this,R.layout.main_activity);

@@ -99,11 +99,11 @@ public class SearchFragment extends Fragment implements Injectable {
                     if (items.isInit()) {
                         binding.loadingState.progressBar.setVisibility(View.GONE);
                         binding.loadingState.infoMsg.setVisibility(View.VISIBLE);
-                        binding.loadingState.infoMsg.setCompoundDrawablesWithIntrinsicBounds(null,null,null,ContextCompat.getDrawable(getActivity(),R.drawable.search_icon));
+                        //binding.loadingState.infoMsg.setCompoundDrawablesWithIntrinsicBounds(null,null,null,ContextCompat.getDrawable(getActivity(),R.drawable.search_icon));
                         binding.loadingState.retry.setVisibility(View.GONE);
                         binding.bookList.setVisibility(View.GONE);
 
-                        binding.loadingState.infoMsg.setText("Click icon for Search");
+                        binding.loadingState.infoMsg.setText(R.string.init_text);
 
                     } else if (items.isError()) {
                         binding.loadingState.progressBar.setVisibility(View.GONE);
