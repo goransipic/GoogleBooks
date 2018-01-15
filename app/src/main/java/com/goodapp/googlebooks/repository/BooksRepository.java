@@ -63,6 +63,7 @@ public class BooksRepository {
         return mBooksDb
                 .queryDao()
                 .getRecentQuery()
+                .filter(item -> item.size() > 0)
                 .map(BookState.QueryLoaded::new)
                 .cast(BookState.class)
                 .subscribeOn(Schedulers.io())

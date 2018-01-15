@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">GoogleBooks</string>
+    <string name="app_name">R3PI Books Demo</string>
     <string name="retry">Retry</string>
     <string name="unknown_error">Unknown Error</string>
     <string name="search_hint_text">search books</string>

@@ -36,7 +36,7 @@ public class SearchViewModel extends ViewModel {
         // Show Loading as inital state
         BookItemsState initialState = BookItemsState.showInitState();
 
-        mDisposable = Observable.merge(loadFirstPage,loadNext)
+        mDisposable = Observable.merge(loadFirstPage,loadNext,booksRepository.getRecentQuery())
                 .scan(initialState, (oldBookState, newBookState) -> newBookState.reduce(oldBookState))
                 .subscribe(items -> result.postValue(items));
     }

@@ -24,7 +24,7 @@ public interface QueryDao {
     void insert(RecentQuery query);
 
 
-    @Query("SELECT * FROM recentquery")
+    @Query("SELECT * FROM recentquery ORDER BY `query` DESC LIMIT 1")
     Single<List<RecentQuery>> getRecentQuery();
 
 }

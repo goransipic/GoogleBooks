@@ -10,6 +10,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
@@ -27,6 +28,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Toast;
 
 import com.goodapp.googlebooks.R;
 import com.goodapp.googlebooks.api.response.BookSearchResponse;
@@ -95,6 +97,9 @@ public class SearchFragment extends Fragment implements Injectable {
         initSearchView();
 
         searchViewModel.render().observe(this, items -> {
+
+                    if (items.getRecentQueries() != null)
+                        Snackbar.make(binding.getRoot(), "Last Query: " +  items.getRecentQueries()[0], Snackbar.LENGTH_LONG).show();
 
                     if (items.isInit()) {
                         binding.loadingState.progressBar.setVisibility(View.GONE);
