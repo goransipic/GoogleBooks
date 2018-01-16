@@ -2,6 +2,7 @@ package com.goodapp.googlebooks.ui.common;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 
 import com.goodapp.googlebooks.MainActivity;
 import com.goodapp.googlebooks.R;
@@ -40,7 +41,7 @@ public class NavigationController {
         String title = item.getVolumeInfo() != null ? item.getVolumeInfo().getTitle() != null ? item.getVolumeInfo().getTitle() : "" : "";
         String publisher = item.getVolumeInfo() != null ? item.getVolumeInfo().getPublisher() != null ? item.getVolumeInfo().getPublisher() : "" : "";
         String author = item.getVolumeInfo() != null ? item.getVolumeInfo().getAuthors() != null ? item.getVolumeInfo().getAuthors().get(0) : "" : "";
-        String imageUrl = item.getVolumeInfo() != null ? item.getVolumeInfo().getImageLinks() != null ? item.getVolumeInfo().getImageLinks().getThumbnail() : "" :"";
+        String imageUrl = item.getVolumeInfo() != null ? item.getVolumeInfo().getImageLinks() != null ? item.getVolumeInfo().getImageLinks().getThumbnail() : "" : "";
         String description = item.getVolumeInfo() != null ? item.getVolumeInfo().getDescription() != null ? item.getVolumeInfo().getDescription() : "" : "";
 
 
@@ -53,6 +54,7 @@ public class NavigationController {
         detailFragment.setArguments(bundle);
 
         fragmentManager.beginTransaction()
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
                 .replace(containerId, detailFragment)
                 .addToBackStack(null)
                 .commitAllowingStateLoss();
