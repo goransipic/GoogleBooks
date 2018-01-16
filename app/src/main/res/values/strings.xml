@@ -9,4 +9,7 @@
     <string name="up">Up</string>
     <string name="init_text">Search books, and more \n with the [img src=search_icon/] button at the top</string>
     <string name="last_query">Last search: </string>
+    <string name="about_the_application">About the application</string>
+    <string name="Ok">ok</string>
+    <string name="ok">Ok</string>
 </resources>

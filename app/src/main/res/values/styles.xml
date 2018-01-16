@@ -10,6 +10,10 @@
         <item name="paddingTopBottom">16dp</item>
     </style>
 
+    <style name="Dialog" parent="@style/Theme.AppCompat.Light.Dialog.Alert">
+        <item name="colorAccent">#009688</item>
+    </style>
+
     <style name="AppTheme.Launcher">
         <item name="android:windowBackground">@drawable/launch_screen</item>
         <item name="colorPrimaryDark">@color/material_r3pi</item>

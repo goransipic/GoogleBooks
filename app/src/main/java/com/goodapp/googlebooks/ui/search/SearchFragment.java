@@ -12,9 +12,11 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -39,6 +41,7 @@ import com.goodapp.googlebooks.binding.FragmentDataBindingComponent;
 import com.goodapp.googlebooks.databinding.SearchFragmentBinding;
 import com.goodapp.googlebooks.di.Injectable;
 import com.goodapp.googlebooks.ui.common.BookAdapter;
+import com.goodapp.googlebooks.ui.common.InfoDialog;
 import com.goodapp.googlebooks.ui.common.NavigationController;
 import com.goodapp.googlebooks.util.AutoClearedValue;
 import com.jakewharton.rxbinding2.support.v7.widget.RxRecyclerView;
@@ -93,6 +96,19 @@ public class SearchFragment extends BaseFragment implements Injectable {
     }
 
     @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.show_version:
+                InfoDialog infoDialog = new InfoDialog();
+                infoDialog.show(getFragmentManager(), null);
+                return true;
+            default:
+                return false;
+        }
+
+    }
+
+    @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         searchViewModel = ViewModelProviders.of(this, viewModelFactory).get(SearchViewModel.class);
         initRecyclerView();
@@ -106,7 +122,7 @@ public class SearchFragment extends BaseFragment implements Injectable {
                     if (items.isInit()) {
                         binding.loadingState.progressBar.setVisibility(View.GONE);
                         binding.loadingState.infoMsg.setVisibility(View.VISIBLE);
-                        binding.loadingState.infoMsg.setCompoundDrawablesWithIntrinsicBounds(null,ContextCompat.getDrawable(getActivity(),R.drawable.empty_state),null,null);
+                        binding.loadingState.infoMsg.setCompoundDrawablesWithIntrinsicBounds(null, ContextCompat.getDrawable(getActivity(), R.drawable.empty_state), null, null);
                         binding.loadingState.retry.setVisibility(View.GONE);
                         binding.bookList.setVisibility(View.GONE);
 
@@ -117,7 +133,7 @@ public class SearchFragment extends BaseFragment implements Injectable {
                         binding.loadingState.infoMsg.setVisibility(View.VISIBLE);
                         binding.loadingState.retry.setVisibility(View.GONE);
                         binding.bookList.setVisibility(View.GONE);
-                        Drawable drawable = ContextCompat.getDrawable(getActivity(),R.drawable.ic_error);
+                        Drawable drawable = ContextCompat.getDrawable(getActivity(), R.drawable.ic_error);
                         binding.loadingState.infoMsg.setCompoundDrawablesWithIntrinsicBounds(null, drawable, null, null);
                         binding.loadingState.infoMsg.setText(R.string.unknown_error);
 
@@ -167,7 +183,7 @@ public class SearchFragment extends BaseFragment implements Injectable {
             binding.included.searchView.closeSearch();
             return true;
         } else {
-           return super.onBackPressed();
+            return super.onBackPressed();
         }
     }
 
