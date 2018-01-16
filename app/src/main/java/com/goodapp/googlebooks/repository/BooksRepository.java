@@ -64,4 +64,7 @@ public class BooksRepository {
     }
 
 
+    public void getInitState() {
+
+    }
 }

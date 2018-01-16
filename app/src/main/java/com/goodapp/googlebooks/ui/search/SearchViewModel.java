@@ -24,6 +24,7 @@ public class SearchViewModel extends ViewModel {
 
     Subject<String> searchQuery = PublishSubject.create();
     Subject<Boolean> loadNextPage = PublishSubject.create();
+    Subject<Boolean> showInitState = PublishSubject.create();
 
     MutableLiveData<BookItemsState> result = new MutableLiveData<>();
 
@@ -33,10 +34,11 @@ public class SearchViewModel extends ViewModel {
     SearchViewModel(BooksRepository booksRepository) {
         Observable<BookState> loadFirstPage = searchQuery.switchMap(booksRepository::getBooks);
         Observable<BookState> loadNext = loadNextPage.switchMap(elemnt -> booksRepository.loadNextPage());
+        Observable<BookState> showInitState = this.showInitState.map(item -> new BookState.InitState());
         // Show Loading as inital state
         BookItemsState initialState = BookItemsState.showInitState();
 
-        mDisposable = Observable.merge(loadFirstPage,loadNext,booksRepository.getRecentQuery())
+        mDisposable = Observable.merge(loadFirstPage,loadNext,booksRepository.getRecentQuery(),showInitState)
                 .scan(initialState, (oldBookState, newBookState) -> newBookState.reduce(oldBookState))
                 .subscribe(items -> result.postValue(items));
     }
@@ -54,6 +56,10 @@ public class SearchViewModel extends ViewModel {
         searchQuery.onNext(originalInput);
     }
 
+    public void showInitState() {
+        showInitState.onNext(true);
+    }
+
     void refresh() {
 
     }
@@ -62,7 +68,4 @@ public class SearchViewModel extends ViewModel {
         loadNextPage.onNext(true);
     }
 
-    public LiveData<Object> getLoadMoreStatus() {
-        return null;
-    }
 }

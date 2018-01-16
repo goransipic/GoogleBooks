@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">R3PI Books Demo</string>
     <string name="retry">Retry</string>
-    <string name="unknown_error">Unknown Error</string>
+    <string name="unknown_error">An Error has occurred</string>
     <string name="search_hint_text">search books</string>
     <string name="empty_search_result">No results for <b>%s</b></string>
     <string name="action_share">Share</string>

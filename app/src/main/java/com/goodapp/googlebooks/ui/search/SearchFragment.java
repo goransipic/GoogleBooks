@@ -6,6 +6,7 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.databinding.DataBindingComponent;
 import android.databinding.DataBindingUtil;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -116,7 +117,8 @@ public class SearchFragment extends BaseFragment implements Injectable {
                         binding.loadingState.infoMsg.setVisibility(View.VISIBLE);
                         binding.loadingState.retry.setVisibility(View.GONE);
                         binding.bookList.setVisibility(View.GONE);
-                        binding.loadingState.infoMsg.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
+                        Drawable drawable = ContextCompat.getDrawable(getActivity(),R.drawable.ic_error);
+                        binding.loadingState.infoMsg.setCompoundDrawablesWithIntrinsicBounds(null, drawable, null, null);
                         binding.loadingState.infoMsg.setText(R.string.unknown_error);
 
                     } else if (items.isLoadingFirstPage()) {
@@ -203,6 +205,7 @@ public class SearchFragment extends BaseFragment implements Injectable {
             @Override
             public void onSearchViewClosed() {
                 //Do some magic
+                searchViewModel.showInitState();
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     Window window = getActivity().getWindow();
                     window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);

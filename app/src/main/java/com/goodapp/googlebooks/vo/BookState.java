@@ -21,6 +21,13 @@ public interface BookState {
         }
     }
 
+    class InitState implements BookState {
+        @Override
+        public BookItemsState reduce(BookItemsState oldState) {
+            return BookItemsState.showInitState();
+        }
+    }
+
     /**
      * Created by gsipic on 14/01/2018.
      */
